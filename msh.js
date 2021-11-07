@@ -164,13 +164,28 @@ function msh(lead) {
         }
       });
 
+      const addons = {};
       for (const adnName of ['FitAddon', 'SearchAddon', 'SerializeAddon', 'Unicode11Addon', 'WebLinksAddon']) {
         let Adn = window[adnName];
         if (Adn[adnName]) {
           window[adnName] = Adn = Adn[adnName];
         }
-        term.loadAddon(new Adn());
+        const inst = addons[adnName] = new Adn();
+        term.loadAddon(inst);
       }
+
+      addons.FitAddon.fit();
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          addons.FitAddon.fit();
+        }, 350);
+      });
+
+      resizeTimeout = setTimeout(() => {
+        addons.FitAddon.fit();
+      }, 350);
 
       term.open(termHome);
       setTimeout(() => {
